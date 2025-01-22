@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zadanie 2</title>
+    <title>Zadanie 3</title>
 </head>
 <body>
     <form id="loginForm" name="loginForm" method="POST">
@@ -13,6 +13,8 @@
     </form>
 
     <?php 
+    include 'db-connection.php';
+
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_POST["web-login"]) && isset($_POST["web-password"])) {
             $login = htmlspecialchars(trim($_POST["web-login"]));
@@ -21,11 +23,20 @@
             $correct_login = "admin";
             $correct_password = "test";
 
-            if(empty($login) || $login !== $correct_login) {
-                echo "<p style='color: red;'>Niepoprawny login</p>";
-            }
-            elseif(empty($password) || $password !== $correct_password) {
-                echo "<p style='color: red;'>Niepoprawne hasło</p>";
+            $sql = "SELECT username, password FROM users";
+            $result = $conn->query($sql);
+
+            if ($result->num_rows > 0) {
+                while($row = $result->fetch_assoc()) {
+                    if(empty($login) || $login !== $row["username"]) {
+                        echo "<p style='color: red;'>Niepoprawny login</p>";
+                    }
+                    elseif(empty($password) || $password !== $row["password"]) {
+                        echo "<p style='color: red;'>Niepoprawne hasło</p>";
+                    }
+                }
+            } else {
+                echo "Brak wyników";
             }
         }
     }

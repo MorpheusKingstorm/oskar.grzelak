@@ -7,3 +7,6 @@ CREATE TABLE users (
     username varchar(30) UNIQUE,
 	password varchar(100)
 );
+
+-- Add test values to database
+-- INSERT INTO users (username, password) VALUES ('admin', 'test');

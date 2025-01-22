@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zadanie 2</title>
+    <title>Zadanie 3</title>
 </head>
 <body>
     <form id="loginForm" name="loginForm" method="POST">
@@ -13,6 +13,8 @@
     </form>
 
     <?php 
+    include 'db.php';
+
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_POST["web-login"]) && isset($_POST["web-password"])) {
             $login = htmlspecialchars(trim($_POST["web-login"]));

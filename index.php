@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zadanie 3</title>
+    <title>Zadanie 4</title>
 </head>
 <body>
     <form id="loginForm" name="loginForm" method="POST">
@@ -16,28 +16,31 @@
     include 'db-connection.php';
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        if (isset($_POST["web-login"]) && isset($_POST["web-password"])) {
-            $login = htmlspecialchars(trim($_POST["web-login"]));
-            $password = htmlspecialchars(trim($_POST["web-password"]));
+        if (!empty($_POST["web-login"]) && !empty($_POST["web-password"])) {
+            $input_login = htmlspecialchars(trim($_POST["web-login"]));
+            $input_password = htmlspecialchars(trim($_POST["web-password"]));
+            
+            $hashed_password = password_hash($input_login, PASSWORD_ARGON2ID);
 
-            $correct_login = "admin";
-            $correct_password = "test";
-
-            $sql = "SELECT username, password FROM users";
-            $result = $conn->query($sql);
+            $stmt = $conn->prepare("SELECT username, password FROM users WHERE username = ?");
+            $stmt->bind_param("s", $input_login);
+            $stmt->execute();
+            $result = $stmt->get_result();
 
             if ($result->num_rows > 0) {
-                while($row = $result->fetch_assoc()) {
-                    if(empty($login) || $login !== $row["username"]) {
-                        echo "<p style='color: red;'>Niepoprawny login</p>";
-                    }
-                    elseif(empty($password) || $password !== $row["password"]) {
-                        echo "<p style='color: red;'>Niepoprawne hasło</p>";
-                    }
+                $row = $result->fetch_assoc();
+                if (password_verify($input_password, $row["password"])) {
+                    echo "<p style='color: green;'>Zalogowano pomyślnie!</p>";
+                } else {
+                    echo "<p style='color: red;'>Niepoprawne hasło</p>";
                 }
             } else {
-                echo "Brak wyników";
+                echo "<p style='color: red;'>Niepoprawny login</p>";
             }
+
+            $stmt->close();
+        } else {
+            echo "<p style='color: red;'>Proszę wypełnić wszystkie pola</p>";
         }
     }
     ?>

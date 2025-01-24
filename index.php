@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zadanie 3</title>
+    <title>Zadanie 4</title>
 </head>
 <body>
     <form id="loginForm" name="loginForm" method="POST">
@@ -19,6 +19,8 @@
         if (!empty($_POST["web-login"]) && !empty($_POST["web-password"])) {
             $input_login = htmlspecialchars(trim($_POST["web-login"]));
             $input_password = htmlspecialchars(trim($_POST["web-password"]));
+            
+            $hashed_password = password_hash($input_login, PASSWORD_ARGON2ID);
 
             $stmt = $conn->prepare("SELECT username, password FROM users WHERE username = ?");
             $stmt->bind_param("s", $input_login);
